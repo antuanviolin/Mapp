@@ -1,50 +1,83 @@
-# Welcome to your Expo app 👋
+# Маршрутчик
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Маршрутчик** — это мобильное приложение, которое помогает находить новые интересные места в вашем городе
 
-## Get started
+## Установка
 
-1. Install dependencies
+### Требования
 
-   ```bash
-   npm install
-   ```
+- [Node.js](https://nodejs.org/) версии 14 или выше.
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) для запуска проекта в мобильных эмуляторах и реальных устройствах.
 
-2. Start the app
+### Шаги для установки
 
-   ```bash
+1. Клонируйте репозиторий:
+
+    ```bash
+    git clone https://github.com/your-username/marshrutchik.git
+    ```
+
+2. Перейдите в директорию проекта:
+
+    ```bash
+    cd marshrutchik
+    ```
+
+3. Установите зависимости:
+
+    ```bash
+    npm install
+    ```
+
+4. Запустите проект:
+
+    ```bash
     npx expo start
-   ```
+    ```
 
-In the output, you'll find options to open the app in a
+### Запуск на Android / iOS
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Для Android: используйте команду `a` в терминале для запуска проекта на Android-устройстве (если установлен Android Emulator).
+- Для iOS: используйте команду `i` для запуска на iOS-устройстве (требуется Xcode).
+- Для веба: используйте команду `w` для запуска на вебе.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Описание проекта
 
-## Get a fresh project
+### Структура
 
-When you're ready, run:
+- **index.js**: Экран приветствия с изображением и кнопкой "Войти", которая перенаправляет пользователя на страницу авторизации.
+- **login.js**: Страница авторизации, где пользователи могут ввести свои учетные данные для входа в систему.
+- **register.js**: Страница регистрации, на которой пользователи могут создать новый аккаунт.
+- **layout.js**: Основной компоновщик (root layout), который управляет навигацией между экранами.
+- **assets/images**: Папка для хранения изображений, например, логотипа приложения.
 
-```bash
-npm run reset-project
-```
+### Навигация
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Проект использует **expo-router** для маршрутизации между экранами:
 
-## Learn more
+1. Экран приветствия (`index.js`) — приветствует пользователя и перенаправляет его на экран входа.
+2. Экран авторизации (`login.js`) — позволяет пользователю войти в систему.
+3. Экран регистрации (`register.js`) — позволяет пользователю создать новый аккаунт.
 
-To learn more about developing your project with Expo, look at the following resources:
+### Компоненты
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **Image**: Для отображения логотипа приложения.
+- **TouchableOpacity**: Для создания кнопок с обработчиками нажатий.
+- **Alert**: Для отображения сообщений об ошибках или успехах.
 
-## Join the community
+## Разработка
 
-Join our community of developers creating universal apps.
+Если вы хотите внести изменения или улучшения в проект, следуйте этим рекомендациям:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Добавление новых экранов
+
+1. Создайте новый файл экрана в папке `app`.
+2. Добавьте экран в навигацию в `app/_layout.tsx`.
+
+### Стилизация
+
+Для изменения стилей экрана отредактируйте файлы стилей в каждом компоненте. Для глобальных стилей вы можете создать отдельный файл стилей и подключить его в нужных местах.
+
+## Лицензия
+
+Этот проект лицензирован под лицензией MIT. Подробнее см. в [LICENSE](LICENSE).
