@@ -1,6 +1,6 @@
 // app/register.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TextInput, Alert, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function RegisterScreen() {
@@ -9,20 +9,54 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const router = useRouter(); // Хук для навигации
-
-  const handleRegister = () => {
-    if (password !== confirmPassword) {
-      alert('Пароли не совпадают');
+  const handleRegister = async () => {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля');
       return;
     }
 
-    // Логика регистрации
-    console.log('Регистрация:', firstName, lastName, email, password);
+    if (password !== confirmPassword) {
+      Alert.alert('Ошибка', 'Пароли не совпадают');
+      return;
+    }
 
-    alert('Вы успешно зарегистрированы');
-    router.push('/login'); // Перенаправление на экран входа
+    setLoading(true); // Начинаем загрузку
+
+    try {
+      // Отправка данных на сервер
+      const response = await fetch('https://your-api-url.com/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Если регистрация успешна
+        Alert.alert('Успех', 'Вы успешно зарегистрировались!');
+        // Перенаправляем на страницу авторизации после успешной регистрации
+        router.push('/login');
+      } else {
+        // Если возникла ошибка на сервере (например, email уже занят)
+        Alert.alert('Ошибка', data.message || 'Не удалось зарегистрироваться. Попробуйте позже.');
+      }
+    } catch (error) {
+      // Обработка ошибок сети или других проблем
+      Alert.alert('Ошибка', 'Произошла ошибка при регистрации. Попробуйте позже.');
+    } finally {
+      setLoading(false); // Завершаем загрузку
+    }
   };
 
   return (

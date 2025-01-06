@@ -1,17 +1,53 @@
 // app/login.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TextInput, Alert, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleLogin = () => {
-    // Логика для входа
-    console.log('Email:', email, 'Password:', password);
-    // После успешного входа можно перенаправить
-    // router.push('/home') или куда угодно
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля');
+      return;
+    }
+    
+    setLoading(true); // Начинаем загрузку
+
+    try {
+      // Здесь указывается URL вашего API для авторизации
+      const response = await fetch('https://your-api-url.com/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Если авторизация успешна
+        Alert.alert('Успех', 'Вы успешно авторизовались!');
+        // Перенаправляем на главную страницу после успешной авторизации
+        router.push('/home');
+      } else {
+        // Если авторизация не удалась
+        Alert.alert('Ошибка', data.message || 'Не удалось авторизоваться. Проверьте введенные данные.');
+      }
+    } catch (error) {
+      // Обработка ошибок сети или других проблем
+      Alert.alert('Ошибка', 'Произошла ошибка при авторизации. Попробуйте позже.');
+    } finally {
+      setLoading(false); // Останавливаем загрузку
+    }
   };
 
   return (
