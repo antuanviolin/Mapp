@@ -1,13 +1,24 @@
 // app/login.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Alert, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  TextInput,
+  Alert,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { Link } from 'expo-router';
 import { useRouter } from 'expo-router';
+import { useUser } from './context/UserContext';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useUser();
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -15,7 +26,12 @@ export default function LoginScreen() {
       Alert.alert('Ошибка', 'Пожалуйста, заполните все поля');
       return;
     }
-    
+
+    const userData = { email, password };
+    await login(userData);
+    router.push('/home');
+
+    /*
     setLoading(true); // Начинаем загрузку
 
     try {
@@ -34,8 +50,9 @@ export default function LoginScreen() {
       const data = await response.json();
 
       if (response.ok) {
+        const userData = { email, password };
         // Если авторизация успешна
-        Alert.alert('Успех', 'Вы успешно авторизовались!');
+        await login(userData);
         // Перенаправляем на главную страницу после успешной авторизации
         router.push('/home');
       } else {
@@ -48,6 +65,7 @@ export default function LoginScreen() {
     } finally {
       setLoading(false); // Останавливаем загрузку
     }
+    */
   };
 
   return (

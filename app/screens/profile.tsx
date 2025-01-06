@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useUser } from '../context/UserContext';
+import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
+  const { user, logout } = useUser();
+  const router = useRouter();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Email и пароль можно передать через состояние или глобальный контекст
-  const userEmail = 'user@example.com'; // Пример
-  const userPassword = 'password123';  // Пример
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -18,8 +18,8 @@ export default function ProfileScreen() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email: userEmail,
-            password: userPassword,
+            email: user?.email,
+            password: user?.password,
           }),
         });
 
@@ -35,9 +35,13 @@ export default function ProfileScreen() {
         setLoading(false);
       }
     };
+    if (user) fetchProfileData();
+  }, [user]);
 
-    fetchProfileData();
-  }, []);
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/login'); // Возвращаемся на экран авторизации
+  };
 
   if (loading) {
     return (
@@ -51,17 +55,23 @@ export default function ProfileScreen() {
   if (!profileData) {
     return (
       <View style={styles.container}>
-        <Text>Не удалось загрузить данные профиля</Text>
+        <Text style={styles.info}>Не удалось загрузить данные профиля</Text>
+        <Text style={styles.info}> Email {user?.email}</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Выйти</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Личный кабинет</Text>
       <Text style={styles.info}>Имя: {profileData.firstName}</Text>
       <Text style={styles.info}>Фамилия: {profileData.lastName}</Text>
       <Text style={styles.info}>Email: {profileData.email}</Text>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Выйти</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -77,11 +87,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     fontWeight: 'bold',
-    color: 'black',
   },
   info: {
     fontSize: 18,
-    marginBottom: 10,
-    color: 'black',
+    marginBottom: 20,
+  },
+  logoutButton: {
+    backgroundColor: 'red',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });

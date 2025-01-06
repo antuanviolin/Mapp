@@ -2,14 +2,22 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { useUser } from './context/UserContext'; // Импортируем useUser
 
 const PlaceholderImage = require('@/assets/images/Micon.png');
 
 export default function Index() {
+  const { user } = useUser(); // Получаем состояние пользователя из контекста
   const router = useRouter();
 
   const handleLogout = () => {
-    router.push('/login');
+    if (user) {
+      // Если пользователь авторизован, перенаправляем на /home
+      router.push('/home');
+    } else {
+      // Иначе на экран авторизации
+      router.push('/login');
+    }
   };
 
   return (
