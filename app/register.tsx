@@ -66,7 +66,6 @@ export default function RegisterScreen() {
         }
       }
     } catch (error) {
-      console.error('Ошибка при регистрации:', error);
       Alert.alert('Ошибка', 'Произошла ошибка при регистрации. Попробуйте позже.');
     } finally {
       setLoading(false);
