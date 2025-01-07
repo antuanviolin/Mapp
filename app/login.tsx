@@ -29,7 +29,7 @@ export default function LoginScreen() {
 
     const userData = { email, password };
     await login(userData);
-    router.push('/home');
+    router.push('/home/homeScreen');
 
     /*
     setLoading(true); // Начинаем загрузку

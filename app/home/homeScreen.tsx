@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 // Импортируем экраны
-import MapScreen from './screens/maps';
-import AddPlaceScreen from './screens/add-place';
-import ProfileScreen from './screens/profile';
+import MapScreen from './maps';
+import AddPlaceScreen from './add-place';
+import ProfileScreen from './profile';
 
 const Tab = createBottomTabNavigator();
 

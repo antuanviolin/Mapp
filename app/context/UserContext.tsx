@@ -1,4 +1,4 @@
-// context/UserContext.tsx
+// app/context/UserContext.tsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -6,6 +6,7 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Добавлено состояние загрузки
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -16,6 +17,8 @@ export const UserProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Ошибка при загрузке пользователя из AsyncStorage:', error);
+      } finally {
+        setLoading(false); // Завершение загрузки
       }
     };
     loadUserData();
@@ -40,7 +43,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </UserContext.Provider>
   );
