@@ -1,15 +1,26 @@
 // app/register.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Alert, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  TextInput,
+  Alert,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [lastName, setLastName]   = useState('');
+  const [email, setEmail]         = useState('');
+  const [password, setPassword]   = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   const handleRegister = async () => {
@@ -26,14 +37,14 @@ export default function RegisterScreen() {
     setLoading(true);
 
     try {
-      const response = await fetch('https:///api/v0/auth/register', {
+      const response = await fetch('https://localhost:8080/api/v0/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          firstName,
-          lastName,
+          first_name: firstName,
+          last_name: lastName,
           email,
           password,
         }),
@@ -42,10 +53,19 @@ export default function RegisterScreen() {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('Успех', 'Вы успешно зарегистрировались!');
+        Alert.alert(
+          'Успех',
+          `Вы успешно зарегистрировались!\nEmail: ${data.email}\nID: ${data.id}`
+        );
+        // Перенаправляем на логин
         router.push('/login');
       } else {
-        Alert.alert('Ошибка', data.message || 'Не удалось зарегистрироваться. Попробуйте позже.');
+        // Ошибка со стороны сервера
+        if (data.error) {
+          Alert.alert('Ошибка', data.error);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось зарегистрироваться. Попробуйте позже.');
+        }
       }
     } catch (error) {
       Alert.alert('Ошибка', 'Произошла ошибка при регистрации. Попробуйте позже.');
@@ -77,6 +97,8 @@ export default function RegisterScreen() {
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
         <TextInput
           style={styles.input}
@@ -92,14 +114,20 @@ export default function RegisterScreen() {
           onChangeText={setConfirmPassword}
           secureTextEntry
         />
-        <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-          <Text style={styles.registerButtonText}>Зарегистрироваться</Text>
-        </TouchableOpacity>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="black" />
+        ) : (
+          <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+            <Text style={styles.registerButtonText}>Зарегистрироваться</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
 }
 
+// Стили
 const styles = StyleSheet.create({
   container: {
     flex: 1,

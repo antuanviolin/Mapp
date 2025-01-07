@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { Link } from 'expo-router';
 import { useRouter } from 'expo-router';
@@ -28,9 +29,8 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-
     try {
-      const response = await fetch('https://api/v0/auth/login', {
+      const response = await fetch('https://localhost:8080/api/v0/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,11 +41,22 @@ export default function LoginScreen() {
       const data = await response.json();
 
       if (response.ok) {
-        const { token } = data;
-        await login(token);
-        router.push('/home/homeScreen');
+        const { 'auth-token': authToken, error } = data;
+
+        if (authToken) {
+          await login(authToken);
+          router.push('/home/homeScreen');
+        } else if (error) {
+          Alert.alert('Ошибка', error);
+        } else {
+          Alert.alert('Ошибка', 'Неизвестный формат ответа сервера.');
+        }
       } else {
-        Alert.alert('Ошибка', data.message || 'Не удалось авторизоваться. Проверьте введенные данные.');
+        if (data.error) {
+          Alert.alert('Ошибка', data.error);
+        } else {
+          Alert.alert('Ошибка', 'Не удалось авторизоваться. Проверьте введенные данные.');
+        }
       }
     } catch (error) {
       Alert.alert('Ошибка', 'Произошла ошибка при авторизации. Попробуйте позже.');
@@ -65,6 +76,8 @@ export default function LoginScreen() {
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
         <TextInput
           style={styles.input}
@@ -73,9 +86,14 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Войти</Text>
-        </TouchableOpacity>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="black" />
+        ) : (
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>Войти</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.footer}>
@@ -86,6 +104,7 @@ export default function LoginScreen() {
   );
 }
 
+// Стили
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -118,6 +137,8 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   registerText: {
     marginBottom: 10,
@@ -125,5 +146,6 @@ const styles = StyleSheet.create({
   link: {
     color: 'blue',
     fontSize: 16,
+    marginBottom: 10,
   },
 });

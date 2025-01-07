@@ -1,5 +1,6 @@
+// app/screens/profile.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useUser } from '../../context/UserContext';
 import { useRouter } from 'expo-router';
 import { Profile } from '../../types/Profile';
@@ -13,7 +14,8 @@ export default function ProfileScreen() {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch('https://api/v0/profile', {
+        // Обратите внимание на точный URL
+        const response = await fetch('https://localhost:8080/api/v0/profile', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -22,18 +24,33 @@ export default function ProfileScreen() {
         });
 
         const data = await response.json();
+
         if (response.ok) {
-          setProfileData(data);
+          setProfileData({
+            firstName: data.first_name,
+            lastName: data.last_name,
+            email: data.email,
+          });
         } else {
-          console.error('Ошибка:', data.message);
+          if (data.error) {
+            console.error('Ошибка:', data.error);
+            Alert.alert('Ошибка', data.error);
+          } else {
+            console.error('Неизвестная ошибка:', data);
+          }
         }
       } catch (error) {
         console.error('Ошибка сети:', error);
+        Alert.alert('Ошибка', 'Не удалось загрузить профиль. Попробуйте позже.');
       } finally {
         setLoading(false);
       }
     };
-    if (token) fetchProfileData();
+    if (token) {
+      fetchProfileData();
+    } else {
+      setLoading(false);
+    }
   }, [token]);
 
   const handleLogout = async () => {
@@ -51,10 +68,11 @@ export default function ProfileScreen() {
   }
 
   if (!profileData) {
+    // Если нет данных о профиле
     return (
       <View style={styles.container}>
         <Text style={styles.info}>Не удалось загрузить данные профиля</Text>
-        <Text style={styles.info}> Пожалуйста, повторите попытку </Text>
+        <Text style={styles.info}>Пожалуйста, повторите попытку или выйдите из аккаунта</Text>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Выйти</Text>
         </TouchableOpacity>
@@ -62,6 +80,7 @@ export default function ProfileScreen() {
     );
   }
 
+  // Если все ок, показываем профиль
   return (
     <View style={styles.container}>
       <Text style={styles.info}>Имя: {profileData.firstName}</Text>
@@ -74,17 +93,13 @@ export default function ProfileScreen() {
   );
 }
 
+// Стили
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center', 
     padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    fontWeight: 'bold',
   },
   info: {
     fontSize: 18,
