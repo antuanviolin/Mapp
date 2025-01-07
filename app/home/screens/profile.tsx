@@ -15,7 +15,7 @@ export default function ProfileScreen() {
     const fetchProfileData = async () => {
       try {
         // Обратите внимание на точный URL
-        const response = await fetch('https://localhost:8080/api/v0/profile', {
+        const response = await fetch('http://localhost:8080/api/v0/profile', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

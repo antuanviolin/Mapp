@@ -4,3 +4,5 @@ export interface Profile {
     lastName: string;
     email: string;
   }
+
+  export default Profile;

@@ -37,7 +37,7 @@ export default function RegisterScreen() {
     setLoading(true);
 
     try {
-      const response = await fetch('https://localhost:8080/api/v0/auth/register', {
+      const response = await fetch('http://localhost:8080/api/v0/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,10 +57,8 @@ export default function RegisterScreen() {
           'Успех',
           `Вы успешно зарегистрировались!\nEmail: ${data.email}\nID: ${data.id}`
         );
-        // Перенаправляем на логин
         router.push('/login');
       } else {
-        // Ошибка со стороны сервера
         if (data.error) {
           Alert.alert('Ошибка', data.error);
         } else {
@@ -68,6 +66,7 @@ export default function RegisterScreen() {
         }
       }
     } catch (error) {
+      console.error('Ошибка при регистрации:', error);
       Alert.alert('Ошибка', 'Произошла ошибка при регистрации. Попробуйте позже.');
     } finally {
       setLoading(false);
