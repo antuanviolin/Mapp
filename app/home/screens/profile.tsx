@@ -13,7 +13,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch('https://your-api-url.com/profile', {
+        const response = await fetch('https://api/v0/profile', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
