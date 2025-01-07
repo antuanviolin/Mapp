@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useUser } from '../context/UserContext';
+import { useUser } from '../../context/UserContext';
 import { useRouter } from 'expo-router';
+import { Profile } from '../../types/Profile';
 
 export default function ProfileScreen() {
-  const { user, logout } = useUser();
+  const { token, logout } = useUser();
   const router = useRouter();
-  const [profileData, setProfileData] = useState(null);
+  const [profileData, setProfileData] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const response = await fetch('https://your-api-url.com/profile', {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            email: user?.email,
-            password: user?.password,
-          }),
         });
 
         const data = await response.json();
@@ -35,12 +33,12 @@ export default function ProfileScreen() {
         setLoading(false);
       }
     };
-    if (user) fetchProfileData();
-  }, [user]);
+    if (token) fetchProfileData();
+  }, [token]);
 
   const handleLogout = async () => {
     await logout();
-    router.replace('/login'); // Возвращаемся на экран авторизации
+    router.replace('/login');
   };
 
   if (loading) {
@@ -56,7 +54,7 @@ export default function ProfileScreen() {
     return (
       <View style={styles.container}>
         <Text style={styles.info}>Не удалось загрузить данные профиля</Text>
-        <Text style={styles.info}> Email {user?.email}</Text>
+        <Text style={styles.info}> Пожалуйста, повторите попытку </Text>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Выйти</Text>
         </TouchableOpacity>
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
   logoutButton: {
     backgroundColor: 'red',
     paddingVertical: 15,
-    paddingHorizontal: 30,
+    paddingHorizontal: 50,
     borderRadius: 5,
   },
   logoutButtonText: {

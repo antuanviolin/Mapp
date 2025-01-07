@@ -27,45 +27,31 @@ export default function LoginScreen() {
       return;
     }
 
-    const userData = { email, password };
-    await login(userData);
-    router.push('/home/homeScreen');
-
-    /*
-    setLoading(true); // Начинаем загрузку
+    setLoading(true);
 
     try {
-      // Здесь указывается URL вашего API для авторизации
       const response = await fetch('https://your-api-url.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        const userData = { email, password };
-        // Если авторизация успешна
-        await login(userData);
-        // Перенаправляем на главную страницу после успешной авторизации
-        router.push('/home');
+        const { token } = data;
+        await login(token);
+        router.push('/home/homeScreen');
       } else {
-        // Если авторизация не удалась
         Alert.alert('Ошибка', data.message || 'Не удалось авторизоваться. Проверьте введенные данные.');
       }
     } catch (error) {
-      // Обработка ошибок сети или других проблем
       Alert.alert('Ошибка', 'Произошла ошибка при авторизации. Попробуйте позже.');
     } finally {
-      setLoading(false); // Останавливаем загрузку
+      setLoading(false);
     }
-    */
   };
 
   return (

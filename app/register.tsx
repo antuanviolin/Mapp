@@ -23,10 +23,9 @@ export default function RegisterScreen() {
       return;
     }
 
-    setLoading(true); // Начинаем загрузку
+    setLoading(true);
 
     try {
-      // Отправка данных на сервер
       const response = await fetch('https://your-api-url.com/register', {
         method: 'POST',
         headers: {
@@ -43,19 +42,15 @@ export default function RegisterScreen() {
       const data = await response.json();
 
       if (response.ok) {
-        // Если регистрация успешна
         Alert.alert('Успех', 'Вы успешно зарегистрировались!');
-        // Перенаправляем на страницу авторизации после успешной регистрации
         router.push('/login');
       } else {
-        // Если возникла ошибка на сервере (например, email уже занят)
         Alert.alert('Ошибка', data.message || 'Не удалось зарегистрироваться. Попробуйте позже.');
       }
     } catch (error) {
-      // Обработка ошибок сети или других проблем
       Alert.alert('Ошибка', 'Произошла ошибка при регистрации. Попробуйте позже.');
     } finally {
-      setLoading(false); // Завершаем загрузку
+      setLoading(false);
     }
   };
 
@@ -108,12 +103,12 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between', // Распределение элементов по экрану
+    justifyContent: 'space-between',
     padding: 16,
   },
   formContainer: {
-    flex: 1, // Заполняет оставшееся пространство
-    justifyContent: 'center', // Центрирует поля
+    flex: 1,
+    justifyContent: 'center',
   },
   input: {
     height: 50,

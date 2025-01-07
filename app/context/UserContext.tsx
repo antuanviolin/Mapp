@@ -5,45 +5,45 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Добавлено состояние загрузки
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUserData = async () => {
+    const loadToken = async () => {
       try {
-        const savedUser = await AsyncStorage.getItem('user');
-        if (savedUser) {
-          setUser(JSON.parse(savedUser));
+        const savedToken = await AsyncStorage.getItem('token');
+        if (savedToken) {
+          setToken(savedToken);
         }
       } catch (error) {
-        console.error('Ошибка при загрузке пользователя из AsyncStorage:', error);
+        console.error('Ошибка при загрузке токена из AsyncStorage:', error);
       } finally {
-        setLoading(false); // Завершение загрузки
+        setLoading(false);
       }
     };
-    loadUserData();
+    loadToken();
   }, []);
 
-  const login = async (userData) => {
+  const login = async (newToken) => {
     try {
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
+      await AsyncStorage.setItem('token', newToken);
+      setToken(newToken);
     } catch (error) {
-      console.error('Ошибка при сохранении пользователя в AsyncStorage:', error);
+      console.error('Ошибка при сохранении токена в AsyncStorage:', error);
     }
   };
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem('user');
-      setUser(null);
+      await AsyncStorage.removeItem('token');
+      setToken(null);
     } catch (error) {
-      console.error('Ошибка при удалении пользователя из AsyncStorage:', error);
+      console.error('Ошибка при удалении токена из AsyncStorage:', error);
     }
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, loading }}>
+    <UserContext.Provider value={{ token, login, logout, loading }}>
       {children}
     </UserContext.Provider>
   );
