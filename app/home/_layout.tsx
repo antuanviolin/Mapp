@@ -4,7 +4,7 @@ import { useUser } from '../context/UserContext';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 export default function HomeLayout() {
-  const { user, loading } = useUser();
+  const { token, loading } = useUser();
 
   if (loading) {
     return (
@@ -14,7 +14,7 @@ export default function HomeLayout() {
     );
   }
 
-  if (!user) {
+  if (!token) {
     return <Redirect href="/login" />;
   }
 
