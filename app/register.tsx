@@ -29,6 +29,12 @@ export default function RegisterScreen() {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Ошибка', 'Введите корректный email');
+      return;
+  }
+
     if (password !== confirmPassword) {
       Alert.alert('Ошибка', 'Пароли не совпадают');
       return;

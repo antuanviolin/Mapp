@@ -28,6 +28,12 @@ export default function LoginScreen() {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Ошибка', 'Введите корректный email');
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch('http://localhost:8080/api/v0/auth/login', {
